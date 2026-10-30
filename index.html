@@ -624,6 +624,9 @@ footer p {
 </footer>
 
 <script>
+// Live Render Backend Base URL
+const BACKEND_URL = "https://agaro-ai.onrender.com";
+
 function updateSlider(id, output, suffix="") {
     let value = document.getElementById(id).value;
     document.getElementById(output).innerText = value + suffix;
@@ -736,7 +739,7 @@ async function analyzeSoil() {
     const rainfall = Number(document.getElementById("rainfall").value);
 
     try {
-        const response = await fetch("/predict-crop", {
+        const response = await fetch(`${BACKEND_URL}/predict-crop`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -785,7 +788,7 @@ async function predictYield() {
     const pest = Number(document.getElementById("yieldPesticide").value);
 
     try {
-        const response = await fetch("/predict_yield", {
+        const response = await fetch(`${BACKEND_URL}/predict_yield`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
