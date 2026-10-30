@@ -98,16 +98,34 @@ def predict_crop():
 def predict_yield():
     try:
         data = request.json
+        crop_name = str(data.get('crop', 'rice')).lower().strip()
         area = float(data.get('Area', 2.0))
         rainfall = float(data.get('Annual_Rainfall', 1200))
         fert = float(data.get('Fertilizer', 500))
         pest = float(data.get('Pesticide', 20))
 
+        # Simple label encoder map for common crops if model expects numerical input
+        crop_map = {
+            'rice': 0, 'maize': 1, 'chickpea': 2, 'kidneybeans': 3,
+            'pigeonpeas': 4, 'mothbeans': 5, 'mungbean': 6, 'blackgram': 7,
+            'lentil': 8, 'pomegranate': 9, 'banana': 10, 'mango': 11,
+            'grapes': 12, 'watermelon': 13, 'muskmelon': 14, 'apple': 15,
+            'orange': 16, 'papaya': 17, 'coconut': 18, 'cotton': 19,
+            'jute': 20, 'coffee': 21, 'wheat': 22
+        }
+        crop_code = crop_map.get(crop_name, 0)
+
         if yield_model is not None:
             try:
-                prediction = yield_model.predict([[area, rainfall, fert, pest]])[0]
+                # 1st try: With Crop Code + Area + Rainfall + Fert + Pest
+                prediction = yield_model.predict([[crop_code, area, rainfall, fert, pest]])[0]
             except Exception:
-                prediction = yield_model.predict([[area]])[0]
+                try:
+                    # 2nd try: With Area + Rainfall + Fert + Pest
+                    prediction = yield_model.predict([[area, rainfall, fert, pest]])[0]
+                except Exception:
+                    # 3rd try: With Area only
+                    prediction = yield_model.predict([[area]])[0]
             yield_val = round(float(prediction), 2)
         else:
             yield_val = round(area * 3.8 + (rainfall * 0.001), 2)
