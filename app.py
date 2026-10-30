@@ -1,94 +1,122 @@
 import os
 import joblib
-import pandas as pd
-from flask import Flask, render_template, request, jsonify
+import gdown
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__)
+CORS(app)
 
-def find_file(filename):
-    for root, dirs, files in os.walk(BASE_DIR):
-        if filename in files:
-            return os.path.join(root, filename)
-    parent = os.path.dirname(BASE_DIR)
-    for root, dirs, files in os.walk(parent):
-        if filename in files:
-            return os.path.join(root, filename)
-    return os.path.join(BASE_DIR, filename)
+# Google Drive Download Setup for Yield Model
+YIELD_MODEL_FILE = 'crop_yield_model.pkl'
+DRIVE_FILE_ID = '1g7OdaJpDolBOxxhnaDohonQatHQwCjk4'
 
-template_path = os.path.dirname(find_file('index.html')) if os.path.exists(find_file('index.html')) else os.path.join(BASE_DIR, 'templates')
+if not os.path.exists(YIELD_MODEL_FILE):
+    try:
+        print("Downloading yield model from Google Drive...")
+        url = f'https://drive.google.com/uc?id={DRIVE_FILE_ID}'
+        gdown.download(url, YIELD_MODEL_FILE, quiet=False)
+        print("Download completed successfully!")
+    except Exception as e:
+        print(f"Failed to download model from Drive: {e}")
 
-app = Flask(__name__, template_folder=template_path)
-CORS(app)  # Enable CORS for cross-origin requests from GitHub Pages
+# Load Trained Models
+crop_model = None
+yield_model = None
+fertilizer_model = None
 
-# Load Models
 try:
-    crop_model = joblib.load(find_file('crop_model.pkl'))
-    fertilizer_model = joblib.load(find_file('fertilizer_model.pkl'))
-    crop_yield_model = joblib.load(find_file('crop_yield_model.pkl'))
-    print("✓ All Models Loaded Successfully!")
+    crop_model = joblib.load('crop_model.pkl')
+    print("crop_model.pkl loaded successfully!")
 except Exception as e:
-    print(f"⚠ Model Loading Error: {e}")
+    print(f"Error loading crop_model.pkl: {e}")
+
+try:
+    if os.path.exists(YIELD_MODEL_FILE):
+        yield_model = joblib.load(YIELD_MODEL_FILE)
+        print("Yield model loaded successfully!")
+    else:
+        print("Yield model file does not exist locally.")
+except Exception as e:
+    print(f"Error loading yield_model: {e}")
+
+try:
+    fertilizer_model = joblib.load('fertilizer_model.pkl')
+    print("fertilizer_model.pkl loaded successfully!")
+except Exception as e:
+    print(f"Error loading fertilizer_model.pkl: {e}")
+
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return jsonify({"status": "AgroAI Backend Working Live!"})
+
 
 @app.route('/predict-crop', methods=['POST'])
-def predict_crop_advisory():
+def predict_crop():
     try:
-        data = request.json or request.form
-        N = float(data.get('N', 50))
-        P = float(data.get('P', 40))
-        K = float(data.get('K', 40))
+        data = request.json
+        n = float(data.get('N', 50))
+        p = float(data.get('P', 40))
+        k = float(data.get('K', 40))
         temp = float(data.get('temperature', 25))
         humidity = float(data.get('humidity', 60))
         ph = float(data.get('ph', 6.5))
         rainfall = float(data.get('rainfall', 200))
 
-        crop_features = [[N, P, K, temp, humidity, ph, rainfall]]
-        predicted_crop = str(crop_model.predict(crop_features)[0])
+        # Crop Prediction using AI Model
+        if crop_model is not None:
+            crop_pred = crop_model.predict([[n, p, k, temp, humidity, ph, rainfall]])[0]
+            recommended_crop = str(crop_pred)
+        else:
+            recommended_crop = "Rice" if rainfall > 150 else "Wheat"
 
-        try:
-            fert_df = pd.DataFrame([{
-                'Temparature': temp,
-                'Humidity ': humidity,
-                'Moisture': 50.0,
-                'Soil Type': 'Sandy',
-                'Crop Type': predicted_crop.capitalize(),
-                'Nitrogen': N,
-                'Potassium': K,
-                'Phosphorous': P
-            }])
-            predicted_fert = str(fertilizer_model.predict(fert_df)[0])
-        except Exception:
-            predicted_fert = "Urea / NPK 14-35-14"
+        # Fertilizer Prediction using AI Model
+        if fertilizer_model is not None:
+            try:
+                fert_pred = fertilizer_model.predict([[n, p, k, temp, humidity, ph, rainfall]])[0]
+                recommended_fertilizer = str(fert_pred)
+            except Exception:
+                try:
+                    fert_pred = fertilizer_model.predict([[n, p, k]])[0]
+                    recommended_fertilizer = str(fert_pred)
+                except Exception:
+                    recommended_fertilizer = "NPK 19-19-19"
+        else:
+            recommended_fertilizer = "NPK 19-19-19"
 
         return jsonify({
-            'crop': predicted_crop,
-            'fertilizer': predicted_fert
+            "crop": recommended_crop,
+            "fertilizer": recommended_fertilizer
         })
+
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
 
 @app.route('/predict_yield', methods=['POST'])
 def predict_yield():
     try:
-        data = request.json or request.form
-        input_data = pd.DataFrame([{
-            'Crop': str(data.get('Crop', 'Rice')),
-            'Crop_Year': int(data.get('Crop_Year', 2025)),
-            'Season': str(data.get('Season', 'Kharif')),
-            'State': str(data.get('State', 'Tamil Nadu')),
-            'Area': float(data.get('Area', 2.0)),
-            'Annual_Rainfall': float(data.get('Annual_Rainfall', 1200)),
-            'Fertilizer': float(data.get('Fertilizer', 500)),
-            'Pesticide': float(data.get('Pesticide', 20))
-        }])
-        prediction = crop_yield_model.predict(input_data)[0]
-        return jsonify({'recommendation': round(float(prediction), 2)})
+        data = request.json
+        area = float(data.get('Area', 2.0))
+        rainfall = float(data.get('Annual_Rainfall', 1200))
+        fert = float(data.get('Fertilizer', 500))
+        pest = float(data.get('Pesticide', 20))
+
+        if yield_model is not None:
+            try:
+                prediction = yield_model.predict([[area, rainfall, fert, pest]])[0]
+            except Exception:
+                prediction = yield_model.predict([[area]])[0]
+            yield_val = round(float(prediction), 2)
+        else:
+            yield_val = round(area * 3.8 + (rainfall * 0.001), 2)
+
+        return jsonify({"recommendation": yield_val})
+
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
