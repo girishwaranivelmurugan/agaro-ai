@@ -2,6 +2,7 @@ import os
 import joblib
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,7 +17,9 @@ def find_file(filename):
     return os.path.join(BASE_DIR, filename)
 
 template_path = os.path.dirname(find_file('index.html')) if os.path.exists(find_file('index.html')) else os.path.join(BASE_DIR, 'templates')
+
 app = Flask(__name__, template_folder=template_path)
+CORS(app)  # Enable CORS for cross-origin requests from GitHub Pages
 
 # Load Models
 try:
@@ -88,4 +91,5 @@ def predict_yield():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
