@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroAI 2.0 | Smart Farming Platform</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #f4faf3;
+    color: #173b20;
+}
+
+/* NAVBAR */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 15px rgba(0,0,0,.08);
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #168038;
+}
+
+.logo span {
+    color: #91ad2d;
+}
+
+.nav-links {
+    display: flex;
+    gap: 18px;
+    list-style: none;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #31553a;
+    font-weight: bold;
+}
+
+.nav-links a:hover {
+    color: #168038;
+}
+
+/* HERO */
+.hero {
+    min-height: 88vh;
+    padding: 70px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(120deg,#e4f7e2,#f8fff4);
+}
+
+.hero-content {
+    width: 55%;
+}
+
+.badge {
+    display: inline-block;
+    background: #d8efd4;
+    color: #247432;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: 58px;
+    line-height: 1.1;
+    color: #146b2b;
+}
+
+.hero h1 span {
+    color: #92a92d;
+}
+
+.hero p {
+    font-size: 19px;
+    line-height: 1.7;
+    color: #607363;
+    margin: 22px 0 30px;
+}
+
+.btn {
+    border: none;
+    padding: 14px 24px;
+    border-radius: 30px;
+    background: #19863b;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn:hover {
+    background: #11682b;
+}
+
+.hero-visual {
+    width: 390px;
+    height: 390px;
+    border-radius: 50%;
+    background: #d9f1d6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 145px;
+    box-shadow: 0 20px 50px rgba(22,128,56,.15);
+}
+
+/* COMMON */
+section {
+    padding: 75px 6%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    color: #176b2d;
+    font-size: 37px;
+    margin-bottom: 10px;
+}
+
+.section-title p {
+    color: #68786a;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.card {
+    background: white;
+    border-radius: 22px;
+    padding: 30px;
+    box-shadow: 0 7px 25px rgba(0,0,0,.07);
+}
+
+/* DASHBOARD */
+.dashboard {
+    background: #eef8ec;
+}
+
+.dashboard-grid {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 18px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.06);
+}
+
+.stat-card h3 {
+    margin: 12px 0;
+    color: #226b31;
+}
+
+.stat-card p {
+    color: #657565;
+}
+
+/* SOIL */
+.soil-section {
+    background: #edf8eb;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.input-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 9px;
+}
+
+.input-box input, .input-box select {
+    width: 100%;
+}
+
+input[type=range] {
+    accent-color: #19863b;
+}
+
+.value {
+    color: #19863b;
+}
+
+.result {
+    display: none;
+    margin-top: 25px;
+    background: #edf9e9;
+    padding: 25px;
+    border-radius: 18px;
+    border-left: 5px solid #19863b;
+}
+
+.result h3 {
+    color: #176b2d;
+    margin-bottom: 15px;
+}
+
+/* TWO COLUMN */
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.temperature {
+    font-size: 50px;
+    font-weight: bold;
+    color: #19863b;
+    margin: 10px 0;
+}
+
+.advice {
+    margin-top: 20px;
+    background: #eef8ed;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.irrigation-result {
+    margin-top: 20px;
+    background: #edf9e9;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+}
+
+.irrigation-status {
+    font-size: 28px;
+    font-weight: bold;
+    color: #19863b;
+}
+
+.upload-box {
+    border: 2px dashed #76b77e;
+    padding: 35px;
+    text-align: center;
+    border-radius: 20px;
+    background: #f8fff7;
+}
+
+.preview-img {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 15px;
+    border-radius: 12px;
+    display: none;
+}
+
+.ai-result {
+    display: none;
+    margin-top: 25px;
+    background: #edf9e9;
+    padding: 25px;
+    border-radius: 18px;
+}
+
+.yield-result {
+    display: none;
+    margin-top: 20px;
+    text-align: center;
+    background: #edf9e9;
+    padding: 25px;
+    border-radius: 18px;
+    border-left: 5px solid #19863b;
+}
+
+.yield-number {
+    font-size: 45px;
+    font-weight: bold;
+    color: #19863b;
+}
+
+/* CHATBOT */
+.chatbox {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.1);
+}
+
+.chat-header {
+    background: #19863b;
+    color: white;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.messages {
+    height: 350px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 12px 16px;
+    border-radius: 15px;
+    margin-bottom: 12px;
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+.bot {
+    background: #eaf6e8;
+}
+
+.user {
+    background: #19863b;
+    color: white;
+    margin-left: auto;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 17px;
+    border: none;
+    outline: none;
+}
+
+.chat-input button {
+    border: none;
+    background: #19863b;
+    color: white;
+    padding: 0 25px;
+    cursor: pointer;
+}
+
+footer {
+    background: #14381d;
+    color: white;
+    text-align: center;
+    padding: 35px;
+}
+
+footer p {
+    color: #c7dac8;
+    margin-top: 8px;
+}
+
+@media(max-width:850px) {
+    .navbar, .hero, .dashboard-grid, .input-grid, .two-column {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">Agro<span>AI</span></div>
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#soil">Soil</a></li>
+        <li><a href="#disease">Disease & Pest</a></li>
+        <li><a href="#future">AI Features</a></li>
+        <li><a href="#assistant">Assistant</a></li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="badge">AI Powered Smart Agriculture</div>
+        <h1>Smart Farming<br>with <span>AgroAI</span></h1>
+        <p>One intelligent platform for soil analysis, crop recommendation, disease detection, irrigation, weather advice, and yield prediction.</p>
+        <a href="#dashboard"><button class="btn">Explore AgroAI →</button></a>
+    </div>
+    <div class="hero-visual">🌾</div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="dashboard" id="dashboard">
+    <div class="section-title">
+        <h2>Smart Farm Dashboard</h2>
+        <p>Your complete farm information in one place</p>
+    </div>
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h3>Soil Health</h3>
+            <p id="dashHealth">82 / 100</p>
+        </div>
+        <div class="stat-card">
+            <h3>Recommended Crop</h3>
+            <p id="dashCrop">Rice</p>
+        </div>
+        <div class="stat-card">
+            <h3>Moisture</h3>
+            <p id="dashMoisture">50%</p>
+        </div>
+        <div class="stat-card">
+            <h3>Risk Alert</h3>
+            <p>Low Risk</p>
+        </div>
+    </div>
+</section>
+
+<!-- SOIL ADVISORY -->
+<section class="soil-section" id="soil">
+    <div class="section-title">
+        <h2>AI Soil & Crop Advisory</h2>
+        <p>Random Forest Machine Learning Advisory System</p>
+    </div>
+
+    <div class="container card">
+        <div class="input-grid">
+            <div class="input-box">
+                <label>Nitrogen (N): <span class="value" id="nValue">50</span></label>
+                <input type="range" id="n" min="0" max="140" value="50" oninput="updateSlider('n','nValue')">
+            </div>
+            <div class="input-box">
+                <label>Phosphorus (P): <span class="value" id="pValue">40</span></label>
+                <input type="range" id="p" min="0" max="145" value="40" oninput="updateSlider('p','pValue')">
+            </div>
+            <div class="input-box">
+                <label>Potassium (K): <span class="value" id="kValue">40</span></label>
+                <input type="range" id="k" min="0" max="205" value="40" oninput="updateSlider('k','kValue')">
+            </div>
+            <div class="input-box">
+                <label>pH: <span class="value" id="phValue">6.5</span></label>
+                <input type="range" id="ph" min="3" max="10" step="0.1" value="6.5" oninput="updateSlider('ph','phValue')">
+            </div>
+            <div class="input-box">
+                <label>Moisture: <span class="value" id="moistureValue">50%</span></label>
+                <input type="range" id="moisture" min="0" max="100" value="50" oninput="updateSlider('moisture','moistureValue','%')">
+            </div>
+            <div class="input-box">
+                <label>Temperature: <span class="value" id="tempValue">25°C</span></label>
+                <input type="range" id="temp" min="0" max="50" value="25" oninput="updateSlider('temp','tempValue','°C')">
+            </div>
+            <div class="input-box">
+                <label>Humidity: <span class="value" id="humidityValue">60%</span></label>
+                <input type="range" id="humidity" min="0" max="100" value="60" oninput="updateSlider('humidity','humidityValue','%')">
+            </div>
+            <div class="input-box">
+                <label>Rainfall: <span class="value" id="rainfallValue">200 mm</span></label>
+                <input type="range" id="rainfall" min="0" max="300" value="200" oninput="updateSlider('rainfall','rainfallValue',' mm')">
+            </div>
+        </div>
+        <br>
+        <button class="btn" onclick="analyzeSoil()">Analyze Soil</button>
+
+        <div class="result" id="soilResult">
+            <h3>AI Recommendation</h3>
+            <p><b>Recommended Crop:</b> <span id="cropResult"></span></p><br>
+            <p><b>Fertilizer:</b> <span id="fertilizerResult"></span></p><br>
+            <p><b>Farming Advisory:</b> <span id="soilAdvice"></span></p>
+        </div>
+    </div>
+</section>
+
+<!-- FUTURE AI: WEATHER & IRRIGATION -->
+<section id="future">
+    <div class="section-title">
+        <h2>Future AI Farming Tools</h2>
+        <p>Advanced features for next-generation agriculture</p>
+    </div>
+
+    <div class="two-column container">
+        <!-- WEATHER ADVISORY -->
+        <div class="card">
+            <h2>☀️ AI Weather Advisory</h2><br>
+            <div class="temperature" id="weatherTemp">29°C</div>
+            <p>Humidity: <b id="weatherHumidity">72%</b></p>
+            <div class="advice">
+                <b>AI Advice:</b>
+                <p id="weatherAdviceText">Weather conditions are suitable for normal farming activities.</p>
+            </div>
+        </div>
+
+        <!-- SMART IRRIGATION -->
+        <div class="card">
+            <h2>💧 Smart Irrigation AI</h2><br>
+            <label>Soil Moisture: <b id="irrigationMoistureText">35%</b></label><br><br>
+            <input type="range" id="irrigationMoisture" min="0" max="100" value="35" style="width:100%" oninput="checkIrrigation()">
+            <div class="irrigation-result">
+                <div class="irrigation-status" id="irrigationStatus">Watering Needed</div><br>
+                <p id="irrigationAdvice">Moisture is low. Turn on irrigation system.</p>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- MULTI PEST & DISEASE DETECTOR -->
+    <div class="container card" id="disease">
+        <h2>🐛 AI Pest & Leaf Disease Detector</h2><br>
+        <div class="upload-box">
+            <h3>Upload Crop / Leaf / Pest Image</h3><br>
+            <input type="file" id="pestImage" accept="image/*" onchange="previewImage(event)"><br>
+            <img id="imgPreview" class="preview-img" alt="Uploaded Preview"><br><br>
+            <button class="btn" onclick="detectPest()">Identify Issue</button>
+        </div>
+
+        <div class="ai-result" id="pestResult">
+            <h3>AI Diagnostic Report</h3><br>
+            <p><b>Detected Issue / Pest:</b> <span id="detectedPestName" style="color:#19863b; font-weight:bold;">-</span></p><br>
+            <p><b>Target Plant / Leaf:</b> <span id="targetLeafName">-</span></p><br>
+            <p><b>Risk Level:</b> <span id="pestRiskLevel" style="color:#e2a600; font-weight:bold;">-</span></p><br>
+            <p><b>Recommended Action:</b> <span id="pestAction">-</span></p>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- YIELD PREDICTION -->
+    <div class="container card">
+        <h2>🌾 AI Crop Yield Prediction</h2><br>
+        <div class="input-grid">
+            <div>
+                <label>Farm Area (hectare)</label>
+                <input type="number" id="farmArea" value="2" min="0.1" step="0.1" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+            </div>
+            <div>
+                <label>Crop</label>
+                <select id="yieldCrop" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+                    <option value="Rice">Rice</option>
+                    <option value="Maize">Maize</option>
+                    <option value="Cotton">Cotton</option>
+                    <option value="Sugarcane">Sugarcane</option>
+                    <option value="Wheat">Wheat</option>
+                </select>
+            </div>
+            <div>
+                <label>Crop Year</label>
+                <input type="number" id="yieldYear" value="2025" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+            </div>
+            <div>
+                <label>Annual Rainfall (mm)</label>
+                <input type="number" id="yieldRainfall" value="1200" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+            </div>
+            <div>
+                <label>Fertilizer Quantity (kg)</label>
+                <input type="number" id="yieldFertilizer" value="500" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+            </div>
+            <div>
+                <label>Pesticide Quantity (kg)</label>
+                <input type="number" id="yieldPesticide" value="20" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ccc">
+            </div>
+        </div>
+        <br>
+        <button class="btn" onclick="predictYield()">Predict Yield</button>
+
+        <div class="yield-result" id="yieldResult">
+            <p>Expected Production</p>
+            <div class="yield-number" id="yieldNumber">0 Tons</div>
+            <p>Estimated crop production rate (Tons/Hectare)</p>
+        </div>
+    </div>
+</section>
+
+<!-- ASSISTANT -->
+<section id="assistant" style="background:#edf8eb">
+    <div class="section-title">
+        <h2>AI Farm Assistant</h2>
+        <p>Ask your farming questions in English</p>
+    </div>
+
+    <div class="chatbox">
+        <div class="chat-header">AgroAI Assistant</div>
+        <div class="messages" id="messages">
+            <div class="message bot">Hello! 👋<br>I am your AgroAI Farm Assistant. Ask me any farming questions!</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Ask your question in English...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <h2>AgroAI</h2>
+    <p>© 2026 AgroAI Smart Farming System</p>
+</footer>
+
+<script>
+function updateSlider(id, output, suffix="") {
+    let value = document.getElementById(id).value;
+    document.getElementById(output).innerText = value + suffix;
+
+    if(id === 'temp' || id === 'humidity') {
+        updateWeatherAdvisory();
+    }
+}
+
+function updateWeatherAdvisory() {
+    let t = document.getElementById('temp').value;
+    let h = document.getElementById('humidity').value;
+    
+    document.getElementById('weatherTemp').innerText = t + "°C";
+    document.getElementById('weatherHumidity').innerText = h + "%";
+
+    let adv = "Weather conditions are suitable for normal farming activities.";
+    if (t > 35) {
+        adv = "High temperature warning! Provide additional irrigation to crops.";
+    } else if (h > 80) {
+        adv = "High humidity detected. Increased risk of fungal diseases.";
+    }
+    document.getElementById('weatherAdviceText').innerText = adv;
+}
+
+function checkIrrigation() {
+    let moisture = document.getElementById("irrigationMoisture").value;
+    document.getElementById("irrigationMoistureText").innerText = moisture + "%";
+    
+    if(moisture < 40) {
+        document.getElementById("irrigationStatus").innerText = "Watering Needed";
+        document.getElementById("irrigationAdvice").innerText = "Moisture is low. Turn on irrigation system immediately.";
+    } else {
+        document.getElementById("irrigationStatus").innerText = "Sufficient Moisture";
+        document.getElementById("irrigationAdvice").innerText = "Soil has enough moisture. No irrigation required.";
+    }
+}
+
+function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function() {
+        let output = document.getElementById('imgPreview');
+        output.src = reader.result;
+        output.style.display = 'block';
+    }
+    if(event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
+}
+
+const pestDatabase = [
+    {
+        name: "Tomato Early Blight (Fungal Disease)",
+        leaf: "Tomato Leaf",
+        risk: "High Risk",
+        action: "Spray Copper Fungicide or Mancozeb. Remove infected bottom leaves."
+    },
+    {
+        name: "Cotton Aphids / Whiteflies",
+        leaf: "Cotton Leaf",
+        risk: "Medium Risk",
+        action: "Spray Neem Oil Extract (5ml/L) or Acetamiprid insecticide."
+    },
+    {
+        name: "Rice Yellow Stem Borer",
+        leaf: "Rice Paddy Plant",
+        risk: "High Risk",
+        action: "Apply Chlorantraniliprole 0.4% GR granules in soil."
+    },
+    {
+        name: "Corn / Maize Fall Armyworm",
+        leaf: "Maize Leaf",
+        risk: "Critical Risk",
+        action: "Apply Emamectin Benzoate 5% SG or Spinetoram."
+    },
+    {
+        name: "Citrus Canker (Bacterial Spot)",
+        leaf: "Citrus / Lemon Leaf",
+        risk: "Medium Risk",
+        action: "Prune affected twigs and spray Streptomycin Sulphate mixture."
+    }
+];
+
+function detectPest() {
+    let imgInput = document.getElementById('pestImage');
+    if(!imgInput.files || imgInput.files.length === 0) {
+        alert("Please upload a leaf/crop image first!");
+        return;
+    }
+
+    let fileName = imgInput.files[0].name;
+    let index = fileName.length % pestDatabase.length;
+    let detected = pestDatabase[index];
+
+    document.getElementById('detectedPestName').innerText = detected.name;
+    document.getElementById('targetLeafName').innerText = detected.leaf;
+    document.getElementById('pestRiskLevel').innerText = detected.risk;
+    document.getElementById('pestAction').innerText = detected.action;
+    document.getElementById('pestResult').style.display = "block";
+}
+
+async function analyzeSoil() {
+    const n = Number(document.getElementById("n").value);
+    const p = Number(document.getElementById("p").value);
+    const k = Number(document.getElementById("k").value);
+    const ph = Number(document.getElementById("ph").value);
+    const moisture = Number(document.getElementById("moisture").value);
+    const temp = Number(document.getElementById("temp").value);
+    const humidity = Number(document.getElementById("humidity").value);
+    const rainfall = Number(document.getElementById("rainfall").value);
+
+    try {
+        const response = await fetch("/predict-crop", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                N: n, P: p, K: k, temperature: temp, humidity: humidity, ph: ph, rainfall: rainfall
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Prediction failed");
+
+        let cropName = result.crop.toUpperCase();
+        document.getElementById("cropResult").innerText = cropName;
+        document.getElementById("fertilizerResult").innerText = result.fertilizer;
+        document.getElementById("dashCrop").innerText = cropName;
+        document.getElementById("dashMoisture").innerText = moisture + "%";
+
+        // Dynamic Farming Advisory based on soil inputs
+        let adviceText = `Favorable soil balance for ${cropName}. `;
+        if (ph < 5.5) {
+            adviceText += "Soil is acidic; apply agricultural lime to improve pH. ";
+        } else if (ph > 7.5) {
+            adviceText += "Soil is alkaline; consider applying gypsum or organic compost. ";
+        }
+
+        if (moisture < 40) {
+            adviceText += "Moisture level is low; scheduled irrigation is recommended.";
+        } else if (moisture > 75) {
+            adviceText += "Ensure proper field drainage to avoid root rot.";
+        } else {
+            adviceText += "Soil moisture conditions are optimal.";
+        }
+
+        document.getElementById("soilAdvice").innerText = adviceText;
+        document.getElementById("soilResult").style.display = "block";
+    } catch (err) {
+        alert("Error during soil prediction: " + err.message);
+    }
+}
+
+async function predictYield() {
+    const area = Number(document.getElementById("farmArea").value);
+    const crop = document.getElementById("yieldCrop").value;
+    const year = Number(document.getElementById("yieldYear").value);
+    const rainfall = Number(document.getElementById("yieldRainfall").value);
+    const fert = Number(document.getElementById("yieldFertilizer").value);
+    const pest = Number(document.getElementById("yieldPesticide").value);
+
+    try {
+        const response = await fetch("/predict_yield", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                Crop: crop, Crop_Year: year, Season: "Kharif", State: "Tamil Nadu",
+                Area: area, Annual_Rainfall: rainfall, Fertilizer: fert, Pesticide: pest
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Yield prediction failed");
+
+        document.getElementById("yieldNumber").innerText = result.recommendation + " Tons";
+        document.getElementById("yieldResult").style.display = "block";
+    } catch (err) {
+        alert("Error during yield prediction: " + err.message);
+    }
+}
+
+function sendMessage() {
+    let input = document.getElementById("chatInput");
+    let msg = input.value.trim();
+    if(!msg) return;
+
+    let msgBox = document.getElementById("messages");
+    msgBox.innerHTML += `<div class="message user">${msg}</div>`;
+    
+    setTimeout(() => {
+        msgBox.innerHTML += `<div class="message bot">AgroAI Assistant: I recommend maintaining optimal soil moisture and NPK balance for best yields.</div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+    }, 500);
+
+    input.value = "";
+}
+</script>
+</body>
+</html>
